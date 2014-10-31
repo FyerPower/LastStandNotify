@@ -1,0 +1,4 @@
+<Addon Author="Gatorade" APIVersion="9" Name="LastStandNotify" Version="1" Description="">
+  <Script Name="LastStandNotify.lua"/>
+  <Form Name="LastStandNotify.xml"/>
+</Addon>
