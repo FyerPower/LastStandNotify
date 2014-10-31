@@ -86,7 +86,6 @@ function LastStandNotify:OnRestore(eType, settings)
 
   self:SetDefaults()
   self.settings = mergeTables(self.settings, settings)
-  self:SetWindowPlacement()
 end
 
 function LastStandNotify:SetDefaults()
