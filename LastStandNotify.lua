@@ -24,7 +24,7 @@ local tSpells = {
   [GameLib.CodeEnumClass.Stalker] = {
     ['spell'] = "Last Stand",
     ['cooldown'] = 123
-  }
+  },
   [GameLib.CodeEnumClass.Spellslinger] = {
     ['spell'] = "Homeward Bound",
     ['cooldown'] = 64
@@ -137,7 +137,7 @@ function LastStandNotify:SetWindowPlacement()
 end
 
 function LastStandNotify:Start()
-  local self.nClassId = GameLib.GetPlayerUnit():GetClassId()
+  self.nClassId = GameLib.GetPlayerUnit():GetClassId()
 
   -- If we dont track anything for this class, exit out
   if not tSpells[self.nClassId] then return; end
