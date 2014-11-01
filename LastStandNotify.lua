@@ -20,6 +20,10 @@ local GameLib = GameLib
 
 local LastStandNotify = {}
 
+local tSpellCooldown = {}
+tSpellCooldown[GameLib.CodeEnumClass.Stalker] = 123
+tSpellCooldown[GameLib.CodeEnumClass.Spellslinger] = 64
+
 -----------------------------------------------------------------------------------------------
 -- Constructor and Initialization
 -----------------------------------------------------------------------------------------------
@@ -116,7 +120,6 @@ function LastStandNotify:OnProgressBarResize()
   self.settings.width = self.wndMain:GetWidth()
 end
 
-
 -----------------------------------------------------------------------------------------------
 -- Functions
 -----------------------------------------------------------------------------------------------
@@ -127,6 +130,7 @@ end
 
 function LastStandNotify:Start()
   self.time = GameLib.GetGameTime()
+  self.cooldown = tSpellCooldown[GameLib.GetPlayerUnit():GetClassId()]
   Sound.Play(211)
   self.wndMain:Show(true)
 
@@ -139,10 +143,10 @@ end
 
 function LastStandNotify:Update()
   local elapsed = (GameLib.GetGameTime() - self.time)
-  local remaining = 123 - elapsed
+  local remaining = self.cooldown - elapsed
 
   if remaining > 0 then
-    self.cooldownBar:SetProgress(elapsed / 123)
+    self.cooldownBar:SetProgress(elapsed / self.cooldown)
     self.cooldownTime:SetText( string.format("%.1f", remaining) )
   else
     self:Stop()
