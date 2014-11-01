@@ -129,8 +129,13 @@ function LastStandNotify:SetWindowPlacement()
 end
 
 function LastStandNotify:Start()
+  local nClassId = GameLib.GetPlayerUnit():GetClassId()
+
+  -- If we dont track anything for this class, exit out
+  if not tSpellCooldown[nClassId] then return; end
+
   self.time = GameLib.GetGameTime()
-  self.cooldown = tSpellCooldown[GameLib.GetPlayerUnit():GetClassId()]
+  self.cooldown = tSpellCooldown[nClassId]
   Sound.Play(211)
   self.wndMain:Show(true)
 
