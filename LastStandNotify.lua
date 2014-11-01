@@ -20,9 +20,16 @@ local GameLib = GameLib
 
 local LastStandNotify = {}
 
-local tSpellCooldown = {}
-tSpellCooldown[GameLib.CodeEnumClass.Stalker] = 123
-tSpellCooldown[GameLib.CodeEnumClass.Spellslinger] = 64
+local tSpells = {
+  [GameLib.CodeEnumClass.Stalker] = {
+    ['spell'] = "Last Stand",
+    ['cooldown'] = 123
+  }
+  [GameLib.CodeEnumClass.Spellslinger] = {
+    ['spell'] = "Homeward Bound",
+    ['cooldown'] = 64
+  }
+}
 
 -----------------------------------------------------------------------------------------------
 -- Constructor and Initialization
@@ -52,6 +59,7 @@ end
 function LastStandNotify:OnDocumentReady()
   if self.xmlDoc ~= nil and self.xmlDoc:IsLoaded() then
     self.wndMain = Apollo.LoadForm(self.xmlDoc, "LastStandNotify", nil, self)
+    self.spellName    = self.wndMain:FindChild("SpellName")
     self.cooldownBar  = self.wndMain:FindChild("ProgressBar")
     self.cooldownTime = self.wndMain:FindChild("CastTime")
 
@@ -129,13 +137,12 @@ function LastStandNotify:SetWindowPlacement()
 end
 
 function LastStandNotify:Start()
-  local nClassId = GameLib.GetPlayerUnit():GetClassId()
+  local self.nClassId = GameLib.GetPlayerUnit():GetClassId()
 
   -- If we dont track anything for this class, exit out
-  if not tSpellCooldown[nClassId] then return; end
+  if not tSpells[self.nClassId] then return; end
 
   self.time = GameLib.GetGameTime()
-  self.cooldown = tSpellCooldown[nClassId]
   Sound.Play(211)
   self.wndMain:Show(true)
 
@@ -148,11 +155,12 @@ end
 
 function LastStandNotify:Update()
   local elapsed = (GameLib.GetGameTime() - self.time)
-  local remaining = self.cooldown - elapsed
+  local remaining = tSpells[self.nClassId]['cooldown'] - elapsed
 
   if remaining > 0 then
     self.cooldownBar:SetProgress(elapsed / self.cooldown)
     self.cooldownTime:SetText( string.format("%.1f", remaining) )
+    self.spellName:SetText(tSpells[self.nClassId]['name'])
   else
     self:Stop()
   end
@@ -163,7 +171,7 @@ function LastStandNotify:Stop()
   self.timer:Stop()
   self.wndMain:Show(false)
 
-  Print("Your last stand is now available")
+  Print("Your "..tSpells[self.nClassId]['name'].." is now available")
 end
 
 -----------------------------------------------------------------------------------------------
